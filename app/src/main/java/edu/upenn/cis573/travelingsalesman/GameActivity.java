@@ -1,6 +1,7 @@
 package edu.upenn.cis573.travelingsalesman;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
@@ -14,6 +15,10 @@ public class GameActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.play_game);
+        Intent intent = getIntent();
+        int numLocations = intent.getIntExtra("NUMBER_OF_LOCATIONS", 0);
+        GameView gameView = (GameView)findViewById(R.id.gameView);
+        gameView.setNumLocations(numLocations);
     }
 
 

@@ -34,25 +34,25 @@ public class GameView extends View {
         mapPositions[1] = new Point(141, 271);
         mapPositions[2] = new Point(272, 518);
         mapPositions[3] = new Point(509, 636);
-        mapPositions[4] = new Point(1324, 402);
-        mapPositions[5] = new Point(1452, 243);
-        mapPositions[6] = new Point(1667, 253);
+        mapPositions[4] = new Point(584, 402); // 1324 instead of 584
+        mapPositions[5] = new Point(834, 243); // 1452 instead of 834
+        mapPositions[6] = new Point(667, 253); // 1667 instead of 667
         mapPositions[7] = new Point(750,  670);
         mapPositions[8] = new Point(1020, 380);
         mapPositions[9] = new Point(870, 250);
         mapPositions[10] = new Point(540, 477);
         mapPositions[11] = new Point(828, 424);
-        mapPositions[12] = new Point(1427, 66);
+        mapPositions[12] = new Point(998, 66); // 1427 instead of 998
     }
 
     public GameView(Context context) {
         super(context);
-        init();
+        //init();
     }
 
     public GameView(Context context, AttributeSet attributeSet) {
         super(context, attributeSet);
-        init();
+        //init();
     }
 
     public static double calculatePathDistance(ArrayList<Point> points) {
@@ -81,7 +81,7 @@ public class GameView extends View {
     }
 
     protected void init() {
-        spinnerNum = MainActivity.numLocations;
+        //spinnerNum = MainActivity.numLocations;
 
         setBackgroundResource(R.drawable.campus);
 
@@ -89,7 +89,10 @@ public class GameView extends View {
 
         mapPoints = new Point[spinnerNum];
 
-        // yeah, I don't know what's going on here
+        /* Chooses spinnerNum points randomly from the set of points specified by the mapPositions array
+         * and stores them in the mapPoints array. The set is used to ensure that a previously chosen
+         * point is not chosen again.
+         */
         Set set = new HashSet();
         Random rn = new Random();
         for (int i = 0; i < spinnerNum; i++) {
@@ -100,6 +103,16 @@ public class GameView extends View {
             set.add(randomNum);
             mapPoints[i] = mapPositions[randomNum];
         }
+    }
+
+    /*This method is called to set the initial value for the spinner item.
+     */
+    public void setNumLocations(int numLocations)
+    {
+        Log.v("Game View", "setNumLocations");
+        spinnerNum = numLocations;
+        init();
+        invalidate();
     }
 
     /*

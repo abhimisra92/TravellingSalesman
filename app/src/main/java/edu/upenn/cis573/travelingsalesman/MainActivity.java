@@ -33,6 +33,7 @@ public class MainActivity extends Activity implements OnItemSelectedListener {
      */
     public void onButtonClick(View button) {
         Intent i = new Intent(this, GameActivity.class);
+        i.putExtra("NUMBER_OF_LOCATIONS", numLocations);
         startActivity(i);
     }
 
