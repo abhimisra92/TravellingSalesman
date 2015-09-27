@@ -17,6 +17,7 @@ public class GameView extends View {
 
     protected ArrayList<Point> coords = new ArrayList<Point>();
     protected ArrayList<Point[]> segments = new ArrayList<Point[]>();
+    //protected Segments segments = new Segments();
     private Point firstPoint;
     protected Point[] mapPoints;
     protected int spinnerNum;
