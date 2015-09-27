@@ -15,9 +15,8 @@ import java.util.*;
 
 public class GameView extends View {
 
-    protected ArrayList<Point> coords = new ArrayList<Point>();
-    protected ArrayList<Point[]> segments = new ArrayList<Point[]>();
-    //protected Segments segments = new Segments();
+    protected ArrayList<Point> coords = new ArrayList<>();
+    protected Segments segments = new Segments();
     private Point firstPoint;
     protected Point[] mapPoints;
     protected int spinnerNum;
@@ -59,18 +58,14 @@ public class GameView extends View {
         for (int i = 0; i < points.size()-1; i++) {
             Point p1 = points.get(i);
             Point p2 = points.get(i+1);
-            double dx = p1.x - p2.x;
-            double dy = p1.y - p2.y;
-            double dist = Math.sqrt(dx*dx + dy*dy);
+            double dist = TwoDimensionPoint.distance(p1, p2);
             total += dist;
         }
 
         // then need to go back to the beginning
         Point p1 = points.get(points.size()-1);
         Point p2 = points.get(0);
-        double dx = p1.x - p2.x;
-        double dy = p1.y - p2.y;
-        double dist = Math.sqrt(dx*dx + dy*dy);
+        double dist = TwoDimensionPoint.distance(p1, p2);
         total += dist;
 
         return total;
@@ -134,10 +129,11 @@ public class GameView extends View {
 
         // draws the line segments
         for (int i = 0; i < segments.size(); i++) {
-            Point[] points = segments.get(i);
+            Point startPoint = segments.getStartPoint(i);
+            Point endPoint = segments.getEndPoint(i);
             stroke.setColor(Color.RED);
             stroke.setStrokeWidth(10);
-            canvas.drawLine(points[0].x, points[0].y, points[1].x, points[1].y, stroke.getPaint());
+            canvas.drawLine(startPoint.x, startPoint.y, endPoint.x, endPoint.y, stroke.getPaint());
         }
 
         // draws the points on the map
@@ -152,9 +148,9 @@ public class GameView extends View {
         // detects whether the segments form a circuit - but there's a bug!
         boolean isCircuit = true;
         HashMap<Point, Integer> connections = new HashMap<Point, Integer>();
-        for (Point[] pair : segments) {
-            Point p1 = pair[0];
-            Point p2 = pair[1];
+        for (LineSegment lineSegment : segments.getLineSegments()) {
+            Point p1 = lineSegment.getStartPoint();
+            Point p2 = lineSegment.getEndPoint();
             Integer value = connections.get(p1);
             if (value == null)
                 value = 0;
@@ -185,15 +181,7 @@ public class GameView extends View {
             ArrayList<Point> shortestPath = ShortestPath.shortestPath(mapPoints);
             double shortestPathLength = calculatePathDistance(shortestPath);
 
-            double myPathLength = 0;
-            for (Point[] pair : segments) {
-                Point p1 = pair[0];
-                Point p2 = pair[1];
-                double dx = p1.x - p2.x;
-                double dy = p1.y - p2.y;
-                double dist = Math.sqrt(dx * dx + dy * dy);
-                myPathLength += dist;
-            }
+            double myPathLength = segments.pathLength();
 
             Log.v("RESULT", "Shortest path length is " + shortestPathLength + "; my path is " + myPathLength);
 
@@ -253,7 +241,7 @@ public class GameView extends View {
             for (int i = 0; i < mapPoints.length; i++) {
                 double dx = p.x - mapPoints[i].x;
                 double dy = p.y - mapPoints[i].y;
-                double dist = Math.sqrt(dx*dx + dy*dy);
+                double dist = TwoDimensionPoint.distance(p, mapPoints[i]);
                 if (dist < 30) {
                     // the "+10" part is a bit of a fudge factor because the point itself is the
                     // upper-left corner of the little red box but we want the center
@@ -284,15 +272,14 @@ public class GameView extends View {
                 for (int i = 0; i < mapPoints.length; i++) {
                     double dx = p.x - mapPoints[i].x;
                     double dy = p.y - mapPoints[i].y;
-                    double dist = Math.sqrt(dx * dx + dy * dy);
+                    double dist = TwoDimensionPoint.distance(p, mapPoints[i]);
 
                     if (dist < 30) {
                         p.x = mapPoints[i].x + 10;
                         p.y = mapPoints[i].y + 10;
-                        Point[] points = {firstPoint, p};
 
                         if (firstPoint.x != p.x && firstPoint.y != p.y) {
-                            segments.add(points);
+                            segments.addLineSegment(firstPoint, p);
                         }
                         break;
                     }
@@ -311,6 +298,15 @@ public class GameView extends View {
         return true;
     }
 
+    public void clearSegments() {
+        segments.clear();
+    }
 
+    public int getSegmentsSize() {
+        return segments.size();
+    }
 
+    public void removeSegment(int i) {
+        segments.removeLineSegment(i);
+    }
 }

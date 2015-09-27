@@ -39,7 +39,8 @@ public class GameActivity extends ActionBarActivity {
 
         if (id == R.id.menu_clear) {
             GameView gv = (GameView)findViewById(R.id.gameView);
-            gv.segments.clear();
+            gv.clearSegments();
+            //gv.segments.clear();
             gv.invalidate();
             return true;
         }
@@ -48,8 +49,9 @@ public class GameActivity extends ActionBarActivity {
             return true;
         } else if (id == R.id.menu_undo) {
             GameView gv = (GameView)findViewById(R.id.gameView);
-            if (gv.segments.size() > 0) {
-                gv.segments.remove(gv.segments.get(gv.segments.size() - 1));
+            int segmentsSize = gv.getSegmentsSize();
+            if (segmentsSize > 0) {
+                gv.removeSegment(segmentsSize - 1);
             } else {
                 Toast.makeText(gv.getContext(), "There's nothing to undo.", Toast.LENGTH_LONG).show();
             }

@@ -46,9 +46,25 @@ public class Segments
 
     public double pathLength()
     {
-        return 0.0;
+        double myPathLength = 0;
+        for(LineSegment lineSegment : lineSegments) {
+            Point p1 = lineSegment.getStartPoint();
+            Point p2 = lineSegment.getEndPoint();
+            double dist = TwoDimensionPoint.distance(p1, p2);
+            myPathLength += dist;
+        }
+        return myPathLength;
     }
 
+    public void removeLineSegment(int index)
+    {
+        lineSegments.remove(index);
+    }
+
+    public void clear()
+    {
+        lineSegments.clear();
+    }
     public int size()
     {
         return lineSegments.size();
